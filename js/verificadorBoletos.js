@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  $("#tablaDatatable").load("tablas/tablaAutobuses.php");
+  $("#tablaDatatable").load("tablas/tablaBoletos.php");
 
   $("#frmAltaAutobuses").submit(function (event) {
     event.preventDefault();
@@ -30,10 +30,10 @@ $(document).ready(function () {
             alertify.success("El registro se realizó con exito");
           } else if (r == 2) {
             alertify.error("¡ERROR! Número de autobus o de placa ya existe");
-          } else if (r == 3) {
-            alertify.error("El Operador ya tiene asignado un autobus");
           } else {
-            alertify.error("Falló el proceso de registro, verifique los datos");
+            alertify.error(
+              "Falló el proceso de registro, verifique los datos"
+            );
           }
         },
       });
@@ -110,36 +110,20 @@ function eliminarAutobus(autobus) {
     ); ///
   }
 
-  function agregaFrmEditarAutobus(autobus) {
-    var empleados = $('#empleadoAct');
-    var html = '';
+  function agregaFrmEditarEstado(boleto) {
     $.ajax({
       type: "POST",
-      data: "autobus=" + autobus,
-      url: "controlador/obtenerDatosAutobus.php",
+      data: "boleto=" + boleto,
+      url: "controlador/obtenerDatosBoleto.php",
       success: function (res) {
         datos = jQuery.parseJSON(res);
-        $("#id_autobus").val(datos["idAutobus"]);
-        $("#numeroBusAct").val(datos["numeroAutobus"]);
-        $("#placaBusAct").val(datos["numPlaca"]);
-        $("#asientosAct").val(datos["asientos"]);
-        $("#estadoAct").val(datos["estado"]);
+        $("#id_boleto").val(datos["idBoleto"]);
+        $("#ruta").val(datos["origen"] + " - " + datos["destino"]);
+        $("#horario").val(datos["horario"]);
+        $("#fechaSalida").val(datos["fecha"]);
+        $("#asiento").val(datos["asiento"]);
+        $("#estado").val(datos["estado"]);
         console.log(datos);
-        console.log(datos["empleados"]);
-
-        empleados.find("option").remove();
-
-        $(datos["empleados"]).each(function (i,v) {
-          html += '<option value="'+v.id_empleado+'">'+ v.nombre_emp + ' ' + v.apellidop_emp + ' ' + v.apellidom_emp +'</option>';
-          
-        });
-        
-        empleados.append(html);
-        console.log(html);
-        empleados.val(datos["idEmpleado"]);
-
-        $("#asientosAct").prop('disabled', true);
-
       },
     });
   }

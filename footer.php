@@ -2,7 +2,7 @@
   <div class="card text-white border-0 rounded-0">
     <img src="img/footer.jpg" class="card-img rounded-0" alt="Fondo">
     <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 card-img-overlay border-0 rounded-0" id="footer">
-      <div class="col-6">
+      <div class="col-md-6">
         <div class="card-text">
           <h3 class="card-title text-center">PlatinoBus</h3>
           <hr>

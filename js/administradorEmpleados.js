@@ -52,10 +52,10 @@ $(document).ready(function () {
             $("#tablaDatatable").load("tablas/tablaEmpleados.php");
             alertify.success("El registro se realizó con exito");
           } else if (r == 2) {
-            alertify.error("¡ERROR!, Nombre de usuario ya existe");
+            alertify.error("¡ERROR! Nombre de usuario ya existe");
           } else {
             alertify.error(
-              "Fallo al realizar el registro, verifique los datos"
+              "Falló el proceso de registro, verifique los datos"
             );
           }
         },
@@ -75,7 +75,6 @@ $(document).ready(function () {
     var telefonoEmp = $("#telefonoEmpAct").val();
     var fechaEmp = $("#fechaEmpAct").val();
     var rolEmp = $("#rolEmpAct").val();
-    var usuarioEmp = $("#nombreUserEmpAct").val();
     var passEmp = $("#passEmpAct").val();
     if (
       terminal == "Elija" &&
@@ -86,43 +85,42 @@ $(document).ready(function () {
       telefonoEmp == "" &&
       fechaEmp == "" &&
       rolEmp == "Elija" &&
-      usuarioEmp == "" &&
-      passEmp == ""
+      usuarioEmp == ""
     ) {
-      alertify.warning("Ingrese todos los datos solicitados");
+      alertify.warning("A excepción del campo Nueva contraseña, no debe haber campos vacios");
     } else {
-      if (
-        validarTerminalRol(terminal, "Termninal") == 1 &&
-        validarTexto(nombreEmp, "Nombre(s)") == 1 &&
-        validarTexto(apellidoPEmp, "Apellido paterno") == 1 &&
-        validarTexto(apellidoMEmp, "Apellido materno") == 1 &&
-        validarDireccion(direccionEmp, "Dirección") == 1 &&
-        validarTelefono(telefonoEmp, "Teléfono") == 1 &&
-        validarFecha(fechaEmp, "Fecha de ingreso laboral") == 1 &&
-        validarTerminalRol(rolEmp, "Rol") == 1 &&
-        validarUsuario(usuarioEmp, "Usuario") == 1 &&
-        validarPass(passEmp, "Contraseña") == 1
-      ) {
-        $.ajax({
-          url: "controlador/actualizarEmpleado.php",
-          method: "POST",
-          data: new FormData(this),
-          contentType: false,
-          processData: false,
-          cache: false,
-          success: function (r) {
-            if (r == 1) {
-              $("#frmEditarEmp")[0].reset();
-              $("#modalEditarEmp").modal("hide");
-              $("#tablaDatatable").load("tablas/tablaEmpleados.php");
-              alertify.success("Se guardaron los cambios con exito");
-            } else {
-              $("#tablaDatatable").load("tablas/tablaEmpleados.php");
-              alertify.error("Fallo al guardar cambios, verifique los datos");
-            }
-          },
-        });
-      }
+      //if (passEmp == "" || validarPass(passEmp, "Contraseña") == 1)
+        if (
+          validarTerminalRol(terminal, "Termninal") == 1 &&
+          validarTexto(nombreEmp, "Nombre(s)") == 1 &&
+          validarTexto(apellidoPEmp, "Apellido paterno") == 1 &&
+          validarTexto(apellidoMEmp, "Apellido materno") == 1 &&
+          validarDireccion(direccionEmp, "Dirección") == 1 &&
+          validarTelefono(telefonoEmp, "Teléfono") == 1 &&
+          validarFecha(fechaEmp, "Fecha de ingreso laboral") == 1 &&
+          validarTerminalRol(rolEmp, "Rol") == 1 &&
+          (passEmp == "" || validarPass(passEmp, "Contraseña") == 1)
+        ) {
+          $.ajax({
+            url: "controlador/actualizarEmpleado.php",
+            method: "POST",
+            data: new FormData(this),
+            contentType: false,
+            processData: false,
+            cache: false,
+            success: function (r) {
+              if (r == 1) {
+                $("#frmEditarEmp")[0].reset();
+                $("#modalEditarEmp").modal("hide");
+                $("#tablaDatatable").load("tablas/tablaEmpleados.php");
+                alertify.success("Se guardaron los cambios con exito");
+              } else {
+                $("#tablaDatatable").load("tablas/tablaEmpleados.php");
+                alertify.error("Falló el proceso, verifique los datos");
+              }
+            },
+          });
+        }
     }
     return false;
   });
@@ -168,7 +166,6 @@ function eliminarEmpleado(empleado) {
         $("#fechaEmpAct").val(datos["fechaEmp"]);
         $("#rolEmpAct").val(datos["rolEmp"]);
         $("#nombreUserEmpAct").val(datos["usuarioEmp"]);
-        $("#passEmpAct").val(datos["passEmp"]);
       },
     });
   }

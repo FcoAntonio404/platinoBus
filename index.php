@@ -1,5 +1,4 @@
 <?php
-//require_once "modelo/sentenciasCRUD.php";
 session_start();
 require_once "modelo/conexion.php";
 require_once "modelo/funciones.php";
@@ -38,12 +37,11 @@ require_once "modelo/funciones.php";
 	<?php require_once "header.php"; ?>
 	<div class="conteiner">
 		<div class="row">
-			<div class="col-lg-12 pr-0">
+			<div class="col-lg-12">
 				<div class="card text-center">
-					<h3 class="text-center mt-3 mb-0 d-inline-block text-primary"><span class="fa fa-bus"> </span> Consulta nuestras rutas</h3>
-					<div class="d-flex justify-content-center align-items-md-center mt-4 border rounded">
+					<h3 class="text-center mt-4 d-inline-block text-primary"><span class="fa fa-bus"> </span> Consulta nuestras rutas</h3>
+					<div class="d-flex justify-content-center align-items-md-center mt-4 border rounded shadow-sm">
 						<div class="row justify-content-center">
-
 							<form id="frmRutas" enctype="multipart/form-data">
 								<nav class="navbar navbar-light w-100">
 									<div class="col-md-4 align-self-center input-group mb-3">
@@ -82,13 +80,13 @@ require_once "modelo/funciones.php";
 													</div>
 												</div>
 												<div class="row">
-													<div class="col card-center"> <input type="date" id="Fecha" name="Fecha" class="form-control form-control-sm" value="">
+													<div class="col card-center"> <input type="date" id="fecha" name="fecha" class="form-control form-control-sm" value="">
 													</div>
 												</div>
 											</div>
 											<div class="col-4 mt-2">
 												<input type="submit" id="submit" name="submit" value="Buscar" class="btn btn-sm btn-info mt-2">
-												<input type="reset" value="Limpiar" class="btn btn-sm btn-success mt-2">
+												<input type="reset" value="Limpiar" class="btn btn-sm btn-danger mt-2">
 											</div>
 										</div>
 									</div>
@@ -99,113 +97,188 @@ require_once "modelo/funciones.php";
 
 					<div class="album py-2 mt-2 pb-md-4 bg-light">
 						<div class="container">
-							<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-								<?php
-								for ($i = 0; $i < 9; $i++) {
-								?>
-									<!------->
-									<div class="col-md-4 mt-3">
-										<div class="card shadow-sm">
-											<img src="img/PB_Logo.png" alt="logotipo" class="card-img">
-											<div class="card-body">
-												<h3 class="text-primary">Orizaba</h3>
-												<p class="card-text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Debitis nostrum sint, dolorum dolor eligendi minima exercitationem quae porro blanditiis voluptates necessitatibus optio libero qui, neque nemo suscipit? Aperiam, non repellat!.</p>
-												<div class="d-flex justify-content-between align-items-center">
-													<div class="btn-group">
-														<button type="button" class="btn btn-sm btn-outline-primary">Consultar</button>
-													</div>
-													<small class="text-muted">9 mins</small>
-												</div>
-											</div>
-										</div>
-									</div>
-								<?php
-								}
-								?>
+							<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="rutasRecibidas">
+
 							</div>
 						</div>
 					</div>
 
+					<div class="container">
+						<div class="card col-md-12 mb-4 shadow">
+							<div class="row no-gutters">
+								<div class="col-md-5">
+									<img src="img/PB_LogoPresentación.png" alt="Logo PB" class="card-img my-2">
+								</div>
+								<div class="col-md-7">
+									<div class="card-body">
+										<h5 class="card-title text-info">Platino Bus</h5>
+										<?php
+										if (!isset($_SESSION['usuarioNombre'])) {
+										?>
+											<p class="card-text text-justify">¡Comodidad asegurada en cada uno de nuestros viajes! Crea una cuenta de usuario y mantente informado de nuestras promociones.</p>
+											<button type="button" class="btn btn-sm m-1 btn-info" data-toggle="modal" data-target="#modalRegistro">Crear cuenta</button>
+											<hr>
+										<?php
+										}
+										?>
+										<p class="card-text text-justify">En México, el autobús sigue siendo el medio de transporte más utilizado para viajar. Actualmente existen más de 12,000 rutas en el país, 8.5 veces más terminales de autobús que aeropuertos y 42,000 unidades de autotransporte contra 258 aeronaves comerciales.<small class="text-muted"> (2015)</small></p>
 
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 
-					<!-- Modal Editar -->
-					<div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-						<div class="modal-dialog" role="document">
+					<!-- Modal Consulta -->
+					<div class="modal fade" id="modalConsulta" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-lg">
 							<div class="modal-content">
-								<div class="modal-header" style="background-color: #F39C12;color: white; font-weight: bold;">
-									<h5 class="modal-title" id="exampleModalLabel">Editar datos:</h5>
-									<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+								<div class="modal-header" style="background-color: #FF6038;color: white; font-weight: bold;">
+									<h5 class="modal-title" id="exampleModalLabel"><span class="fa fa-ticket"></span> Consultar boletos:</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 										<span aria-hidden="true">&times;</span>
 									</button>
 								</div>
 								<div class="modal-body">
 									<div class="container-fluid">
-										<form id="frmEditar" enctype="multipart/form-data">
-											<div class="card-body">
-
+										<form id="frmConsultarBoletos" enctype="multipart/form-data">
+											<div class="card-body pt-0">
 												<div class="row">
-													<div class="col-md-6 mb-3">
-														<label class="text-left col-form-label">RPE del Trabajador: </label>
-														<input type="text" id="rpeE" name="rpeE" class="form-control" placeholder="RPE del trabajador" readonly="readonly" value="">
+													<div class="col-md-6 text-center">
+														<h3 class="text-dark">Asientos</h3>
+														<div class="row d-flex justify-content-around">
+															<div class="col-md-9 align-middle" id="tablaAsientos">
 
-													</div>
-													<div class="col-md-6 mb-3">
-														<label class="text-left col-form-label">Area: </label>
-														<input type="text" id="areaE" name="areaE" class="form-control" placeholder="Area del trabajador" value="">
-
-													</div>
-												</div>
-
-												<div class="row">
-													<div class="col-md-12 mb-3">
-
-														<label class="text-left col-form-label">Nombre completo del Trabajador: </label>
-														<input type="text" id="nombreE" name="nombreE" class="form-control" value="">
-
-													</div>
-												</div>
-
-												<div class="row">
-													<div class="col-md-6 mb-3">
-
-														<label class="text-left col-form-label">Fecha de ingreso laboral: </label>
-														<input type="date" id="FechaE" name="FechaE" class="form-control" value="">
-														<input type="hidden" id="DiasE" name="DiasE" value="">
-
-
-													</div>
-													<div class="col-md-6 mb-3">
-														<div class="row mb-2">
-															<div class="col-md-5">
-																<label class="text-center col-form-label">Antiguedad (años):</label>
 															</div>
-															<div class="col-md-7">
-																<input type="number" id="ANTE" name="ANTE" class="form-control" placeholder="Años" value="" min="0">
-															</div>
-
-															<button type="button" class="btn btn-link" id="calcularE"><span class="fa fa-magic"></span> Calcular Automaticamente</button>
-
 														</div>
 													</div>
-												</div>
-												<div class="row">
-													<div class="col-md-12 mb-3">
-														<div class="alert alert-primary " role="alert" id="OKE" style="display:none;">
-															<label> Renovará periodo vacacional cada: <strong id="Next2"></strong>;
-																del cual, deberá tomar las vacaciones en un plazo no mayor a 18 meses.
-																<span> </span>
-															</label>
-
+													<div class="col-md-6">
+														<h3 class="text-info" id="rutaNombre"> </h3>
+														<div class="row">
+															<div class="col-md-6 mb-3">
+																<label class="text-left col-form-label">Fecha de salida:</label>
+																<input type="text" id="usuarioTipo" name="usuarioTipo" class="form-control" value="<?php if (isset($_SESSION['usuarioTipo'])) echo $_SESSION['usuarioTipo'];
+																																																										else echo 0 ?>" style="display:none;">
+																<input type="text" id="id_ruta" name="id_ruta" class="form-control" value="" style="display:none;">
+																<input type="text" id="fechaSalida" name="fechaSalida" class="form-control" value="" readonly>
+															</div>
+															<div class="col-md-6 mb-3">
+																<label class="text-left col-form-label">Horario: </label>
+																<input type="text" id="horario" name="horario" class="form-control" value="" readonly>
+															</div>
 														</div>
+														<div class="input-group flex-nowrap mt-2 mb-2">
+															<div class="input-group-prepend">
+																<label class="input-group-text" for="costo">Costo:</label>
+															</div>
+															<input type="text" id="costo" name="costo" class="form-control" value="" readonly>
+														</div>
+														<div class="input-group flex-nowrap mt-3 mb-2">
+															<div class="input-group-prepend">
+																<label class="input-group-text" for="asiento">Asiento seleccionado:</label>
+															</div>
+															<input type="text" id="asiento" name="asiento" class="form-control" value="" readonly>
+														</div>
+														<?php
+														if (isset($_SESSION['usuarioNombre']) && ($_SESSION['usuarioTipo'] == "1" || $_SESSION['usuarioTipo'] == "2")) {
+														?>
+															<div class="input-group flex-nowrap mt-3 mb-2">
+																<div class="input-group-prepend">
+																	<label class="input-group-text" for="categoria">Categor&iacute;a:</label>
+																</div>
+																<select class="custom-select" id="categoria" name="categoria">
+																	<option value="0" selected>Elija</option>
+																	<option value="a">Adulto mayor</option>
+																	<option value="b">Infantil</option>
+																	<option value="c">Estudiante</option>
+																	<option value="d">Normal</option>
+																</select>
+															</div>
+															<div class="input-group flex-nowrap mt-3 mb-2">
+																<div class="input-group-prepend">
+																	<label class="input-group-text" for="nombreCliente">Nombre:</label>
+																</div>
+																<input type="text" id="nombreCliente" name="nombreCliente" class="form-control">
+															</div>
+															<div class="input-group flex-nowrap mt-3 mb-2">
+																<div class="input-group-prepend">
+																	<label class="input-group-text" for="total">Total a pagar:</label>
+																</div>
+																<input type="text" id="total" name="total" class="form-control" value="" readonly>
+															</div>
+															<div class="modal-footer">
+																<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+																<button type="submit" id="submitBoleto" name="submitBoleto" class="btn btn-primary">Comprar boleto</button>
+															</div>
+														<?php
+														} else if (isset($_SESSION['usuarioNombre']) && $_SESSION['usuarioTipo'] == "5") {
+														?>
+															<hr>
+															<div id="smart-button-container">
+																<div style="text-align: center;">
+																	<div id="paypal-button-container"></div>
+																</div>
+															</div>
+															<script src="https://www.paypal.com/sdk/js?client-id=sb&currency=MXN" data-sdk-integration-source="button-factory"></script>
+															<script>
+																function initPayPalButton() {
+																	paypal.Buttons({
+																		style: {
+																			shape: 'rect',
+																			color: 'gold',
+																			layout: 'vertical',
+																			label: 'paypal',
+
+																		},
+
+																		createOrder: function(data, actions) {
+																			return actions.order.create({
+																				purchase_units: [{
+																					"description": "Boleto PlatinoBus",
+																					"amount": {
+																						"currency_code": "MXN",
+																						"value": 1
+																					}
+																				}]
+																			});
+																		},
+
+																		onApprove: function(data, actions) {
+																			return actions.order.capture().then(function(details) {
+																				alert('Transaction completed by ' + details.payer.name.given_name + '!');
+																				
+																			});
+																		},
+
+																		onError: function(err) {
+																			console.log(err);
+																		}
+																	}).render('#paypal-button-container');
+																}
+																initPayPalButton();
+															</script>
+															<div class="modal-footer">
+																<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+																
+															</div>
+														<?php
+														} else {
+														?>
+															<div class="alert alert-primary mt-4" role="alert">
+																<p class="text-justify">Para continuar y realizar la compra de un boleto, debe <b>registrarse</b>, sí usted ya tiene una cuenta, lo invitamos a <b>inciar sesión</b>.</p>
+															</div>
+															<div class="modal-footer">
+																<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+															</div>
+														<?php
+														}
+														?>
+
 													</div>
+
 												</div>
-
-
 											</div>
-											<div class="modal-footer">
-												<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-												<button type="submit" id="submit" name="submit" class="btn btn-primary">Guardar cambios</button>
-											</div>
+
 										</form>
 									</div>
 								</div>
@@ -222,49 +295,6 @@ require_once "modelo/funciones.php";
 </body>
 
 </html>
-<script type="text/javascript">
-	$(document).ready(function() {
-		var html;
-		$("#terminalDestino").prop('disabled', true);
-		$("#terminalOrigen").change(function() {
-			var destino = $("#terminalDestino");
-			$("#terminalDestino").prop('disabled', true);
-			var origen = $(this);
-			html = '';
-			if ($(this).val() != 0) {
-				$.ajax({
-					data: {
-						origen: origen.val()
-					},
-					url: 'controlador/terminalesDestino.php',
-					type: 'POST',
-					dataType: 'json',
-					beforeSend: function() {
-						origen.prop('disabled', true);
-					},
-					success: function(respuesta) {
-						res = JSON.parse(respuesta);
-
-						origen.prop('disabled', false);
-						destino.find('option').remove();
-						$(res).each(function(i, v) {
-							html += '<option value = "' + v.id_terminal + '">' + v.ciudad_ter + '</option>';
-						});
-						destino.append(html);
-						console.log(res);
-						destino.prop('disabled', false);
-					},
-					error: function() {
-						alert('Ocurrio un error en el servidor ..');
-						origen.prop('disabled', false);
-					}
-				});
-
-			} else {
-				//origen.find('option').remove();
-				//origen.prop('disabled', true);
-			}
-
-		});
-	});
-</script>
+<script src="js/validaciones.js"></script>
+<script src="js/usuarioRegistro.js"></script>
+<script src="js/rutas.js"></script>

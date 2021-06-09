@@ -1,6 +1,11 @@
 <?php
-//require_once "modelo/sentenciasCRUD.php";
 session_start();
+if (!isset($_SESSION['usuarioNombre']) || $_SESSION['usuarioTipo'] != "1") {
+	echo '<script language = javascript>
+	        alert("Debe iniciar sesión para acceder a este contenido")
+	        self.location = "index.php"
+	      </script>';
+}
 require_once "modelo/conexion.php";
 require_once "modelo/funciones.php";
 ?>
@@ -31,7 +36,7 @@ require_once "modelo/funciones.php";
 		}
 	</style>
 
-	<title>Atobuses</title>
+	<title>Autobuses</title>
 </head>
 
 <body>
@@ -47,9 +52,29 @@ require_once "modelo/funciones.php";
 								<div class="col p-4 d-flex flex-column position-static">
 									<h3 class="d-inline-block mb-2 text-primary"><span class="fa fa-plus-circle"></span> Registrar autobuses:</h3>
 
-									<!---- Formulario Registro de empleados ----->
+									<!---- Formulario Registro de autobuses ----->
 									<form id="frmAltaAutobuses" enctype=" multipart/form-data">
 										<div class="card-body">
+											<div class="row">
+												<div class="col-md-12">
+													<div class="input-group flex-nowrap mt-2 mb-2">
+														<div class="input-group-prepend">
+															<label class="input-group-text" for="inputGroupSelect01">Terminal:</label>
+														</div>
+														<select class="custom-select" id="terminal" name="terminal">
+															<option value="0" selected>Elija</option>
+															<?php
+															$terminales = getTerminales();
+															foreach ($terminales as $key => $terminal) :
+															?>
+																<option value="<?php echo $terminal->id_terminal; ?>"> <?php echo $terminal->nombre_ter; ?> </option>
+															<?php
+															endforeach;
+															?>
+														</select>
+													</div>
+												</div>
+											</div>
 											<div class="row">
 												<div class="col-md-12">
 													<div class="input-group flex-nowrap mt-2 mb-2">
@@ -57,15 +82,8 @@ require_once "modelo/funciones.php";
 															<label class="input-group-text" for="inputGroupSelect01">Operador</label>
 														</div>
 														<select class="custom-select" id="empleado" name="empleado">
-															<option selected>Elija</option>
-															<?php
-															$operadores = getEmpleadosOperadores();
-															foreach ($operadores as $key => $operador) :
-															?>
-																<option value="<?php echo $operador->id_empleado; ?>"> <?php echo $operador->nombre_emp . ' ' . $operador->apellidop_emp . ' ' . $operador->apellidom_emp; ?> </option>
-															<?php
-															endforeach;
-															?>
+															<option value="0" selected>Elija</option>
+
 														</select>
 													</div>
 												</div>
@@ -96,23 +114,19 @@ require_once "modelo/funciones.php";
 														</div>
 														<select class="custom-select" id="asientos" name="asientos">
 															<option selected>Elija</option>
-															<option vulue="29">29</option>
-															<option vulue="30">30</option>
-															<option vulue="32">32</option>
+															<option value="29">29</option>
+															<option value="30">30</option>
+															<option value="32">32</option>
 														</select>
 													</div>
 												</div>
 												<div class="col-md-6">
 													<div class="flex-nowrap mt-2 mb-2">
-														<input type="submit" id="submit" name="submit" value="Agregar" class="btn btn-primary mr-2 mt-2">
+														<input type="submit" id="submitAgregar" name="submitAgregar" value="Agregar" class="btn btn-primary mr-2 mt-2">
 														<input type="reset" value="Limpiar" class="btn btn-danger mt-2">
 													</div>
 												</div>
 											</div>
-
-
-
-
 										</div>
 									</form>
 								</div>
@@ -145,7 +159,7 @@ require_once "modelo/funciones.php";
 								</div>
 								<div class="modal-body">
 									<div class="container-fluid">
-										<form id="frmEditarEmp" enctype="multipart/form-data">
+										<form id="frmEditarAutobus" enctype="multipart/form-data">
 											<div class="card-body">
 												<div class="row">
 													<div class="col-md-12">
@@ -155,15 +169,7 @@ require_once "modelo/funciones.php";
 															</div>
 															<input type="text" id="id_autobus" name="id_autobus" class="form-control" value="" style="display:none;">
 															<select class="custom-select" id="empleadoAct" name="empleadoAct">
-																<option selected>Elija</option>
-																<?php
-																$operadores = getEmpleadosOperadores();
-																foreach ($operadores as $key => $operador) :
-																?>
-																	<option value="<?php echo $operador->id_empleado; ?>"> <?php echo $operador->nombre_emp . ' ' . $operador->apellidop_emp . ' ' . $operador->apellidom_emp; ?> </option>
-																<?php
-																endforeach;
-																?>
+																
 															</select>
 														</div>
 													</div>
@@ -172,7 +178,7 @@ require_once "modelo/funciones.php";
 													<div class="input-group-prepend">
 														<span class="input-group-text">N&uacute;mero de autobus</span>
 													</div>
-													<input type="text" id="numeroBusAct" name="numeroBusAct" class="form-control" placeholder="No. de autobus" aria-label="Username" aria-describedby="addon-wrapping">
+													<input type="text" id="numeroBusAct" name="numeroBusAct" class="form-control" placeholder="No. de autobus" aria-label="Username" aria-describedby="addon-wrapping" readonly>
 												</div>
 												<div class="input-group flex-nowrap mt-3 mb-3">
 													<div class="input-group-prepend">
@@ -205,7 +211,7 @@ require_once "modelo/funciones.php";
 											</div>
 											<div class="modal-footer">
 												<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-												<button type="submit" id="submit" name="submit" class="btn btn-primary">Guardar cambios</button>
+												<button type="submit" id="submitEditar" name="submitEditar" class="btn btn-primary">Guardar cambios</button>
 											</div>
 										</form>
 									</div>
@@ -222,5 +228,56 @@ require_once "modelo/funciones.php";
 </body>
 
 </html>
+<script type="text/javascript">
+	$(document).ready(function() {
+		var html;
+		$("#empleado").prop('disabled', true);
+		$("#terminal").change(function() {
+			var empleado = $("#empleado");
+			$("#empleado").prop('disabled', true);
+			var terminal = $(this);
+			html = '<option value="0" selected>Elija</option>';
+			if ($(this).val() != 0) {
+				$.ajax({
+					data: {
+						terminal: terminal.val()
+					},
+					url: 'controlador/obtenerOperadoresLibres.php',
+					type: 'POST',
+					dataType: 'json',
+					beforeSend: function() {
+						terminal.prop('disabled', true);
+					},
+					success: function(respuesta) {
+						res = JSON.parse(respuesta);
+
+						terminal.prop('disabled', false);
+						empleado.find('option').remove();
+						if ($.isEmptyObject(res)) {
+							html = '<option value = "0">Sin operadores libres</option>';
+						} else {
+							$(res).each(function(i, v) {
+								html += '<option value = "' + v.id_empleado + '">' + v.nombre_emp + ' ' + v.apellidop_emp + ' ' + v.apellidom_emp + '</option>';
+							});
+						}
+
+						empleado.append(html);
+						console.log(res);
+						empleado.prop('disabled', false);
+					},
+					error: function() {
+						alert('Ocurrio un error en el servidor ..');
+						terminal.prop('disabled', false);
+					}
+				});
+
+			} else {
+				//terminal.find('option').remove();
+				//terminal.prop('disabled', true);
+			}
+
+		});
+	});
+</script>
 <script src="js/validaciones.js"></script>
 <script src="js/administradorAutobuses.js"></script>

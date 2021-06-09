@@ -9,7 +9,7 @@ $result = $conexion->query($sql);
 
 <div>
 	<table class="table table-bordered table-striped " cellspacing="0" width="100%" id="idtablaTerminales">
-		<thead style="background-color: #17a2b8;color: white; font-weight: bold;">
+		<thead style="background-color: #338FB6;color: white; font-weight: bold;">
 			<tr>
 				<td>N&uacute;mero</td>
 				<td>Placa</td>
@@ -26,7 +26,7 @@ $result = $conexion->query($sql);
 					<td><?php echo $mostrar[1] ?></td>
 					<td><?php echo $mostrar[2] ?></td>
 					<td><?php echo $mostrar[4] ?></td>
-					<td><?php echo ($mostrar[3] == 'c')? "Circulación" : (($mostrar[3] == 'm')? "Mantenimiento" : "Suspendido")?></td>
+					<td><?php echo ($mostrar[3] == 'c') ? "Circulación" : (($mostrar[3] == 'm') ? "Mantenimiento" : "Suspendido") ?></td>
 					<td style="text-align: center;">
 						<span class="btn btn-sm btn-warning " data-toggle="modal" data-target="#modalEditarAutobus" onclick="agregaFrmEditarAutobus('<?php echo $mostrar[0] ?>')">
 							<span class="fa fa-pencil"></span>

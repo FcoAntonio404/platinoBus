@@ -1,12 +1,6 @@
 <?php 
-
-	class conectar
-	{
-		private static $conexion;
-
-		public static function abrirConexion()
-		{
-			
+	class conectar{
+		public static function abrirConexion(){
 			$puerto = 'localhost';
 			$dbname = 'platinobus';
 			$username = 'root';
@@ -18,13 +12,9 @@
 			}
 			$conexion->set_charset("utf8");
 			return $conexion;
-			
 		}
-		public static function cerrarConexion()
-		{
-			
+		public static function cerrarConexion(){	
 				//$Cone = pg_close($conexion);
 				//return $Cone;
-			
 		}
 	}

@@ -2,13 +2,22 @@ $(document).ready(function () {
   $("#tablaTerminales").load("tablas/tablaTerminales.php");
 
   var $input = $("#imagen");
+  var $inputAct = $("#imagenAct");
   var extensiones = ["png", "jpg", "jpeg"];
 
   $input.on("change", function (e) {
     var file = this.files[0];
     if (!validarExtension(file)) {
-      alertify.warning("La imágen no cumple el formato (JPEG/JPG/PNG)");
+      alertify.warning("El archivo no cumple el formato (JPEG/JPG/PNG)");
       $("#imagen").val("");
+    }
+  });
+
+  $inputAct.on("change", function (e) {
+    var file = this.files[0];
+    if (!validarExtension(file)) {
+      alertify.warning("El archivo no cumple el formato (JPEG/JPG/PNG)");
+      $("#imagenAct").val("");
     }
   });
 
@@ -57,12 +66,12 @@ $(document).ready(function () {
               $("#tablaTerminales").load("tablas/tablaTerminales.php");
               alertify.success("El registro se realizó con exito");
             } else if (r == 2) {
-              alertify.error("¡ERROR!, Nombre de terminal ya existe");
+              alertify.error("¡ERROR! Nombre de terminal ya existe");
             } else if(r == 3){
-              alertify.error("¡ERROR!, La imagen no se pudo guardar");
+              alertify.error("¡ERROR! La imagen no se pudo guardar");
             } else{
               alertify.error(
-                "Fallo al realizar el registro, verifique los datos"
+                "Falló el proceso de registro, verifique los datos"
               );
             }
           },
@@ -74,44 +83,26 @@ $(document).ready(function () {
 
   $("#frmEditarTer").submit(function (event) {
     event.preventDefault();
-    var terminal = $("#terminalEmpAct").val();
-    var nombreEmp = $("#nombreEmpAct").val();
-    var apellidoPEmp = $("#apellidoPEmpAct").val();
-    var apellidoMEmp = $("#apellidoMEmpAct").val();
-    var direccionEmp = $("#direccionEmpAct").val();
-    var telefonoEmp = $("#telefonoEmpAct").val();
-    var fechaEmp = $("#fechaEmpAct").val();
-    var rolEmp = $("#rolEmpAct").val();
-    var usuarioEmp = $("#nombreUserEmpAct").val();
-    var passEmp = $("#passEmpAct").val();
+    var terminal = $("#nombreTerAct").val();
+    var direccion = $("#direccionTerAct").val();
+    var empleado = $("#empleado").val();
+    var telefonoTer = $("#telefonoTerAct").val();
     if (
-      terminal == "Elija" &&
-      nombreEmp == "" &&
-      apellidoPEmp == "" &&
-      apellidoMEmp == "" &&
-      direccionEmp == "" &&
-      telefonoEmp == "" &&
-      fechaEmp == "" &&
-      rolEmp == "Elija" &&
-      usuarioEmp == "" &&
-      passEmp == ""
+      terminal == "" &&
+      direccion == "" &&
+      empleado == "" &&
+      telefonoTer == ""
     ) {
-      alertify.warning("Ingrese todos los datos solicitados");
+      alertify.warning("A excepión del campo imágen, no debe haber campos vacios");
     } else {
       if (
-        validarTerminalRol(terminal, "Termninal") == 1 &&
-        validarTexto(nombreEmp, "Nombre(s)") == 1 &&
-        validarTexto(apellidoPEmp, "Apellido paterno") == 1 &&
-        validarTexto(apellidoMEmp, "Apellido materno") == 1 &&
-        validarDireccion(direccionEmp, "Dirección") == 1 &&
-        validarTelefono(telefonoEmp, "Teléfono") == 1 &&
-        validarFecha(fechaEmp, "Fecha de ingreso laboral") == 1 &&
-        validarTerminalRol(rolEmp, "Rol") == 1 &&
-        validarUsuario(usuarioEmp, "Usuario") == 1 &&
-        validarPass(passEmp, "Contraseña") == 1
+        validarTexto(terminal, "Termninal") == 1 &&
+        validarDireccion(direccion, "Dirección") == 1 &&
+        validarTerminalRol(empleado, "Empleado") == 1 &&
+        validarTelefono(telefonoTer, "Teléfono") == 1
       ) {
         $.ajax({
-          url: "controlador/actualizarEmpleado.php",
+          url: "controlador/actualizarTerminal.php",
           method: "POST",
           data: new FormData(this),
           contentType: false,
@@ -119,13 +110,13 @@ $(document).ready(function () {
           cache: false,
           success: function (r) {
             if (r == 1) {
-              $("#frmEditarEmp")[0].reset();
-              $("#modalEditarEmp").modal("hide");
-              $("#tablaDatatable").load("tablas/tablaEmpleados.php");
+              $("#frmEditarTer")[0].reset();
+              $("#modalEditarTer").modal("hide");
+              $("#tablaTerminales").load("tablas/tablaTerminales.php");
               alertify.success("Se guardaron los cambios con exito");
             } else {
-              $("#tablaDatatable").load("tablas/tablaEmpleados.php");
-              alertify.error("Fallo al guardar cambios, verifique los datos");
+              $("#tablaTerminales").load("tablas/tablaTerminales.php");
+              alertify.error("Falló el proceso, verifique los datos");
             }
           },
         });
@@ -146,7 +137,7 @@ function eliminarTerminal(terminal) {
           success: function (r) {
             if (r == 1) {
               $("#tablaTerminales").load("tablas/tablaTerminales.php");
-              alertify.success("¡La termianl se ha eliminado con exito!");
+              alertify.success("¡La terminal se ha eliminado con exito!");
             } else {
               $("#tablaTerminales").load("tablas/tablaTerminales.php");
               alertify.error("No se pudo eliminar la terminal");
@@ -172,7 +163,6 @@ function eliminarTerminal(terminal) {
         $("#direccionTerAct").val(datos["direccionTer"]);
         $("#ciudadTerAct").val(datos["ciudadTer"]);
         $("#estadoTerAct").val(datos["estadoTer"]);
-        //$("#empleado").val(datos["idEmpleado"]);
         $("#telefonoTerAct").val(datos["telefonoTer"]);
         $("#img").attr("src", "img/terminales/"+datos["imagen"]);
         console.log(datos);
@@ -181,11 +171,13 @@ function eliminarTerminal(terminal) {
         empleados.find("option").remove();
 
         $(datos["empleados"]).each(function (i,v) {
-          html += '<option value="'+v.id_empleado+'">'+ v.nombre_emp + ' ' + v.apellidop_emp + '</option>';
+          html += '<option value="'+v.id_empleado+'">'+ v.nombre_emp + ' ' + v.apellidop_emp + ' ' + v.apellidom_emp +'</option>';
           
         });
+        
         empleados.append(html);
         console.log(html);
+        empleados.val(datos["idEmpleado"]);
 
       },
     });

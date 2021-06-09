@@ -1,6 +1,11 @@
 <?php
-//require_once "modelo/sentenciasCRUD.php";
 session_start();
+if (!isset($_SESSION['usuarioNombre']) || $_SESSION['usuarioTipo'] != "1") {
+	echo '<script language = javascript>
+	        alert("Debe iniciar sesión para acceder a este contenido")
+	        self.location = "index.php"
+	      </script>';
+}
 require_once "modelo/conexion.php";
 require_once "modelo/funciones.php";
 ?>
@@ -31,7 +36,7 @@ require_once "modelo/funciones.php";
 		}
 	</style>
 
-	<title>Administrador</title>
+	<title>Empleados</title>
 </head>
 
 <body>
@@ -265,7 +270,7 @@ require_once "modelo/funciones.php";
 													<div class="input-group-prepend">
 														<span class="input-group-text" id="addon-wrapping"><i class="fa fa-unlock-alt" aria-hidden="true"></i></span>
 													</div>
-													<input type="password" id="passEmpAct" name="passEmpAct" class="form-control" placeholder="Contraseña" aria-label="Username" aria-describedby="addon-wrapping" readonly>
+													<input type="password" id="passEmpAct" name="passEmpAct" class="form-control" placeholder="Nueva contraseña" aria-label="Username" aria-describedby="addon-wrapping">
 												</div>
 											</div>
 											<div class="modal-footer">

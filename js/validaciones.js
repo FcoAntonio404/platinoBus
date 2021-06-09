@@ -4,10 +4,13 @@ var nombreUsuario = /^[A-Za-z0-9_]{6,15}$/;
 var contrasena = /^[A-Za-z0-9_]{6,16}$/;
 var direccion = /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s0-9.,;:#°]{10,150}$/;
 var telefono = /^\d{10}$/;
-var numeroTres= /^\d{1,3}$/;
+var numeroTres = /^\d{1,3}$/;
+var precio = /^\d{2,3}$/;
 var terminal = /^\d{1,3}$/;
+var estado = /^[cms]{1}$/;
+var categoria = /^[abcd]{1}$/;
 var placa = /^[a-zA-Z]{3}-[0-9]{3}-[a-zA-Z0-9]{1}$/;
-var correo = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+var correo = /^([\da-z_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/;
 var fecha = /^\d{4}-\d{2}-\d{2}$/;
 var fechaActual = new Date();
 
@@ -91,6 +94,22 @@ function validarNumeroTres(campo, sms) {
     return 0;
   }
 }
+function validarPrecio(campo, sms) {
+  if (campo == "") {
+    alertify.warning("Campo: "+sms+" vacío.");
+    return 0;
+  }
+  if (espaciosVacios.test(campo)) {
+    alertify.warning("El campo: "+sms+" solo contiene espacios en blanco.");
+    return 0;
+  }
+  campo.trim();
+  if (precio.test(campo)) return 1;
+  else{
+    alertify.warning("El campo: "+sms+" no cumple con el formato ¡¡¡verifique!!!");
+    return 0;
+  }
+}
 function validarCorreo(campo, sms) {
   if (campo == "") {
     alertify.warning("Campo: "+sms+" vacío.");
@@ -139,8 +158,40 @@ function validarPass(campo, sms) {
     return 0;
   }
 }
+function validarEstado(campo, sms) {
+  if (campo == "Elija" || campo == null || campo == "0") {
+    alertify.warning("Campo: "+sms+" vacío.");
+    return 0;
+  }
+  if (espaciosVacios.test(campo)) {
+    alertify.warning("El campo: "+sms+" solo contiene espacios en blanco.");
+    return 0;
+  }
+  campo.trim();
+  if (estado.test(campo)) return 1;
+  else{
+    alertify.warning("El campo: "+sms+" no cumple con el formato ¡¡¡verifique!!!");
+    return 0;
+  }
+}
+function validarCategoria(campo, sms) {
+  if (campo == "Elija" || campo == null || campo == "0") {
+    alertify.warning("Campo: "+sms+" vacío.");
+    return 0;
+  }
+  if (espaciosVacios.test(campo)) {
+    alertify.warning("El campo: "+sms+" solo contiene espacios en blanco.");
+    return 0;
+  }
+  campo.trim();
+  if (categoria.test(campo)) return 1;
+  else{
+    alertify.warning("El campo: "+sms+" no cumple con el formato ¡¡¡verifique!!!");
+    return 0;
+  }
+}
 function validarTerminalRol(campo, sms) {
-  if (campo == "Elija") {
+  if (campo == "Elija" || campo == null || campo == "0") {
     alertify.warning("Campo: "+sms+" vacío.");
     return 0;
   }
@@ -174,6 +225,29 @@ function validarFecha(campo, sms) {
     if(fechaRecibida.getTime() <= fechaActual.getTime()) return 1;
     else{
       alertify.warning("El campo: " + sms + " no puede ser mayor a la fecha actual.");
+      return 0;
+    }
+  }
+}
+function validarFechaSalida(campo, sms) {
+  if (campo == "") {
+    alertify.warning("Campo: "+sms+" vacío.");
+    return 0;
+  }
+  if (espaciosVacios.test(campo)) {
+    alertify.warning("El campo: "+sms+" solo contiene espacios en blanco.");
+    return 0;
+  }
+  campo.trim();
+  if (!fecha.test(campo)) {
+    alertify.warning("El campo: " + sms + " no cumple con el formato ¡¡¡verifique!!!");
+    return 0;
+  } else {//17,05,2021
+    var fechaRecibida = new Date(campo.split("-"));
+    //17-05-2021:00:00 <= 17-05-2021:19:00
+    if(fechaRecibida.getTime() >= fechaActual.getTime()) return 1;
+    else{
+      alertify.warning("El campo: " + sms + " no puede ser menor a la fecha actual.");
       return 0;
     }
   }
